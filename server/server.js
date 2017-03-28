@@ -106,10 +106,12 @@ app.patch(`/todos/:id`, (req, res) => {
      });
 });
 
+// GET THIS USER
 app.get('/users/me', authenticate, (req, res) => {
      res.send(req.user);
 });
 
+// CREATE NEW USER
 app.post('/users', (req, res) => {
      let body = _.pick(req.body, [`email`, `password`]);
      let user = new User(body);
@@ -125,6 +127,7 @@ app.post('/users', (req, res) => {
      });
 });
 
+// START SERVER
 app.listen(port, () => {
   console.log(`Application Launched on port:${port}`);
 });

@@ -4,17 +4,7 @@ const jwt = require(`jsonwebtoken`);
 const _ = require(`lodash`);
 const bcrypt = require(`bcryptjs`);
 
-// // let user = new User({
-// //      email: `joegrotto@heir.company`
-// // });
-//
-// user.save().then((doc) => {
-//      console.log(`User saved:`);
-//      console.log(JSON.stringify(doc, undefined, 2));
-// }, (e) => {
-//      console.log(`Couldn't save User.`);
-// });
-
+// USER SCHEMA
 let UserSchema = new mongoose.Schema({
      email: {
           type: String,

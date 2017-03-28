@@ -16,26 +16,4 @@ var Todo = mongoose.model('Todo', {
   }
 });
 
-// let newToDo = new toDo({
-//      text: `feed puddles`,
-// });
-//
-// newToDo.save().then((doc) => {
-//      console.log(`ToDo saved:`);
-//      console.log(JSON.stringify(doc, undefined, 2));
-// }, (e) => {
-//      console.log(`Couldn't save ToDo.`);
-// });
-//
-// let doneToDo = new toDo({
-//      text: `find puddles`,
-// });
-//
-// doneToDo.save().then((doc) => {
-//      console.log(`ToDo saved:`);
-//      console.log(JSON.stringify(doc, undefined, 2));
-// }, (e) => {
-//      console.log(`Couldn't save ToDo.`);
-// });
-
 module.exports = {Todo};
