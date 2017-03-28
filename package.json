@@ -4,9 +4,9 @@
   "description": "to do list app",
   "main": "index.js",
   "scripts": {
-    "test": "mocha server/**/*.test.js",
-    "test-watch": "npm test",
-    "start": "node server/server.js"
+     "start": "node server/server.js",
+     "test": "export NODE_ENV=test || SET \"NODE_ENV=test\" && mocha server/**/*.test.js",
+     "test-watch": "npm test"
   },
   "engines": {
     "node": "7.7.1"
