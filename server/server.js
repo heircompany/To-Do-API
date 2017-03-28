@@ -1,9 +1,9 @@
-const express = require(`express`),
-bodyParser = require(`body-parser`),
-{ObjectID} = require(`mongodb`),
-{mongoose} = require(`./db/mongoose`),
-{Todo} = require(`./models/todo`),
-{User} = require(`./models/user`);
+const express = require(`express`);
+const bodyParser = require(`body-parser`);
+const {ObjectID} = require(`mongodb`);
+const {mongoose} = require(`./db/mongoose`);
+const {Todo} = require(`./models/todo`);
+const {User} = require(`./models/user`);
 
 let app = express();
 // use local path variable for port, otherwise use port 3000
@@ -57,12 +57,35 @@ app.get('/todos/:id', (req, res) => {
     if (!todo) {
       return res.status(404).send();
     }
-    // error
+      res.send({todo});
+      // error
          // 400 - send empty body back
-    res.send({todo});
   }).catch((e) => {
     res.status(400).send();
   });
+});
+
+app.delete(`/todos/:id`, (req, res) => {
+     // check ID validity
+          // 404 if not
+     let id = req.params.id;
+     if (!ObjectID.isValid(id)) {
+          return res.status(404).send();
+     }
+     // find ID
+     // success
+          // if todo - send it back with 200
+          // if no todo - send back 404 with empty body
+     Todo.findByIdAndRemove(id).then((todo) => {
+          if (!todo) {
+            return res.status(404).send();
+          }
+     res.send({todo});
+     // error
+         // 400 - send empty body back
+    }).catch((e) => {
+      res.status(400).send();
+    });
 });
 
 app.listen(port, () => {
