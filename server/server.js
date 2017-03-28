@@ -2,6 +2,7 @@ require(`./config/config`);
 const express = require(`express`);
 const bodyParser = require(`body-parser`);
 const _ = require(`lodash`);
+
 const {ObjectID} = require(`mongodb`);
 const {mongoose} = require(`./db/mongoose`);
 const {Todo} = require(`./models/todo`);
@@ -14,8 +15,10 @@ const port = process.env.PORT;
 app.use(bodyParser.json());
 
 // ALL TO DO'S
-app.get('/todos', (req, res) => {
-     Todo.find().then((todos) => {
+app.get('/todos', authenticate, (req, res) => {
+     Todo.find({
+          _creator: req.user._id
+     }).then((todos) => {
           res.send({todos});
      }, (e) => {
           res.status(400).send(e);
@@ -23,9 +26,10 @@ app.get('/todos', (req, res) => {
 });
 
 // CREATE TO DO
-app.post('/todos', (req, res) => {
+app.post('/todos', authenticate, (req, res) => {
      let todo = new Todo({
-          text: req.body.text
+          text: req.body.text,
+          _creator: req.user._id
      });
 
      todo.save().then((doc) => {
@@ -36,7 +40,7 @@ app.post('/todos', (req, res) => {
 });
 
 // READ TO DO
-app.get('/todos/:id', (req, res) => {
+app.get('/todos/:id', authenticate, (req, res) => {
   let id = req.params.id;
   // check ID validity
        // 404 if not
@@ -47,7 +51,10 @@ app.get('/todos/:id', (req, res) => {
   // success
        // if todo - send it back
        // if no todo - send back 404 with empty body
-  Todo.findById(id).then((todo) => {
+  Todo.findOne({
+       _id: id,
+       _creator: req.user._id
+ }).then((todo) => {
     if (!todo) {
       return res.status(404).send();
     }
@@ -60,7 +67,7 @@ app.get('/todos/:id', (req, res) => {
 });
 
 // UPDATE TO DO
-app.patch(`/todos/:id`, (req, res) => {
+app.patch(`/todos/:id`, authenticate, (req, res) => {
      let id = req.params.id;
      // pick values user can edit
      let body = _.pick(req.body, [`text`, `completed`]);
@@ -77,7 +84,10 @@ app.patch(`/todos/:id`, (req, res) => {
           //set completed at to blank value
           body.completedAt = null;
      }
-     Todo.findByIdAndUpdate(id, {$set: body}, {new: true}).then((todo) => {
+     Todo.findOneAndUpdate({
+          _id: id,
+          _creator: req.user._id
+     }, {$set: body}, {new: true}).then((todo) => {
           if (!todo) {
                return res.status(404).send();
           }
@@ -88,7 +98,7 @@ app.patch(`/todos/:id`, (req, res) => {
 });
 
 // DELETE TO DO
-app.delete(`/todos/:id`, (req, res) => {
+app.delete(`/todos/:id`, authenticate, (req, res) => {
      // check ID validity
           // 404 if not
      let id = req.params.id;
@@ -99,7 +109,10 @@ app.delete(`/todos/:id`, (req, res) => {
      // success
           // if todo - send it back with 200
           // if no todo - send back 404 with empty body
-     Todo.findByIdAndRemove(id).then((todo) => {
+     Todo.findOneAndRemove({
+          _id: id,
+          _creator: req.user._id
+     }).then((todo) => {
           if (!todo) {
             return res.status(404).send();
           }

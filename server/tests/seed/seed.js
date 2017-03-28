@@ -3,17 +3,6 @@ const {ObjectID} = require(`mongodb`);
 const {Todo} = require(`./../../models/todo`);
 const {User} = require(`./../../models/user`);
 
-const todos = [{
-     _id: new ObjectID(),
-     text: "first todo test",
-     completed: true,
-     completedAt: 333
-}, {
-     _id: new ObjectID(),
-     text: "second todo test",
-     completed: false
-}];
-
 const userIdOne = new ObjectID();
 const userIdTwo = new ObjectID();
 const users = [{
@@ -28,6 +17,23 @@ const users = [{
      _id: userIdTwo,
      email: `joeyg@heir.company`,
      password: `P@ssw0rd2`,
+     tokens: [{
+          access: `auth`,
+          token: jwt.sign({_id: userIdTwo, access: `auth`}, `silly puddles`).toString()
+     }]
+}];
+
+const todos = [{
+     _id: new ObjectID(),
+     text: "first todo test",
+     completed: true,
+     completedAt: 333,
+     _creator: userIdOne
+}, {
+     _id: new ObjectID(),
+     text: "second todo test",
+     completed: false,
+     _creator: userIdTwo
 }];
 
 const populateTodos = (done) => {
