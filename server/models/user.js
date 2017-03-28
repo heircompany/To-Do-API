@@ -2,6 +2,18 @@ const mongoose = require(`mongoose`);
 const validator = require(`validator`);
 const jwt = require(`jsonwebtoken`);
 const _ = require(`lodash`);
+const bcrypt = require(`bcryptjs`);
+
+// // let user = new User({
+// //      email: `joegrotto@heir.company`
+// // });
+//
+// user.save().then((doc) => {
+//      console.log(`User saved:`);
+//      console.log(JSON.stringify(doc, undefined, 2));
+// }, (e) => {
+//      console.log(`Couldn't save User.`);
+// });
 
 let UserSchema = new mongoose.Schema({
      email: {
@@ -72,17 +84,21 @@ UserSchema.statics.findByToken = function(token) {
      });
 };
 
-let User = mongoose.model(`User`, UserSchema);
+//MONGOOSE MIDDLEWARE
+UserSchema.pre(`save`, function (next) {
+     let user = this;
+     if (user.isModified(`password`)) {
+          bcrypt.genSalt(10, (err, salt) => {
+               bcrypt.hash(user.password, salt, (err, hash) => {
+                    user.password = hash;
+                    next();
+               });
+          });
+     } else {
+          next();
+     }
+});
 
-// // let user = new User({
-// //      email: `joegrotto@heir.company`
-// // });
-//
-// user.save().then((doc) => {
-//      console.log(`User saved:`);
-//      console.log(JSON.stringify(doc, undefined, 2));
-// }, (e) => {
-//      console.log(`Couldn't save User.`);
-// });
+let User = mongoose.model(`User`, UserSchema);
 
 module.exports = {User};
