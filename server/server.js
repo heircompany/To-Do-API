@@ -1,9 +1,9 @@
 const express = require(`express`),
-const bodyParser = require(`body-parser`),
-const  {ObjectID} = require(`mongodb`),
+bodyParser = require(`body-parser`),
+{ObjectID} = require(`mongodb`),
 {mongoose} = require(`./db/mongoose`),
 {Todo} = require(`./models/todo`),
-{User} = require(`./models/user`),
+{User} = require(`./models/user`);
 
 let app = express();
 // use local path variable for port, otherwise use port 3000
