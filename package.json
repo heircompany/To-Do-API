@@ -12,6 +12,9 @@
   "author": "Joe",
   "license": "ISC",
   "dependencies": {
-    "mongodb": "^2.2.25"
+    "body-parser": "^1.17.1",
+    "express": "^4.15.2",
+    "mongodb": "^2.2.25",
+    "mongoose": "^4.9.2"
   }
 }
