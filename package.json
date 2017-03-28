@@ -5,8 +5,12 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha server/**/*.test.js",
-    "test-watch": "npm test"
+    "test-watch": "npm test",
+    "start": "node server/server.js"
   },
+  "engines": {
+     "node": "7.7.1"
+ },
   "keywords": [
     "todo"
   ],

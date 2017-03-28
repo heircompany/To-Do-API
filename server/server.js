@@ -1,14 +1,13 @@
-const express = require(`express`);
-const bodyParser = require(`body-parser`);
+const express = require(`express`),
+const bodyParser = require(`body-parser`),
+const  {ObjectID} = require(`mongodb`),
+{mongoose} = require(`./db/mongoose`),
+{Todo} = require(`./models/todo`),
+{User} = require(`./models/user`),
 
-const {mongoose} = require(`./db/mongoose`);
-const {Todo} = require(`./models/todo`);
-const {User} = require(`./models/user`);
-const  {ObjectID} = require(`mongodb`);
-
+let app = express();
 // use local path variable for port, otherwise use port 3000
 const port = process.env.PORT || 3000;
-let app = express();
 app.use(bodyParser.json());
 
 app.get('/todos', (req, res) => {
