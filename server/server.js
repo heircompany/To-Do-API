@@ -32,18 +32,6 @@ app.post('/todos', (req, res) => {
      });
 });
 
-app.post('/users', (req, res) => {
-     let user = new User({
-          text: req.body.text
-     });
-
-     user.save().then((doc) => {
-          res.send(doc);
-     }, (e) => {
-          res.status(400).send(e);
-     });
-});
-
 app.get('/todos/:id', (req, res) => {
   let id = req.params.id;
   // check ID validity
@@ -114,6 +102,30 @@ app.patch(`/todos/:id`, (req, res) => {
           res.send({todo});
      }).catch((e) => {
           res.status(400).send();
+     });
+});
+
+app.get('/users', (req, res) => {
+     User.find().then((users) => {
+          res.send({users});
+     }, (e) => {
+          res.status(400).send(e);
+     });
+});
+
+app.post('/users', (req, res) => {
+     let body = _.pick(req.body, [`email`, `password`]);
+     let user = new User(body);
+
+     //model methods on User - User.findByToken
+     //instance methods on user - user.generateAuthToken
+     user.save().then(() => {
+          return user.generateAuthToken();
+     }).then((token) => {
+          //custom header for JWT schema
+          res.header(`x-auth`, token).send(user);
+     }).catch((e) => {
+          res.status(400).send(e);
      });
 });
 
