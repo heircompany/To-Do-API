@@ -22,6 +22,11 @@ app.post('/todos', (req, res) => {
           text: req.body.text
      });
 
+     app.post('/users', (req, res) => {
+          let user = new User({
+               text: req.body.text
+          });
+
      todo.save().then((doc) => {
           res.send(doc);
      }, (e) => {
