@@ -13,6 +13,7 @@ let app = express();
 const port = process.env.PORT;
 app.use(bodyParser.json());
 
+// ALL TO DO'S
 app.get('/todos', (req, res) => {
      Todo.find().then((todos) => {
           res.send({todos});
@@ -21,6 +22,7 @@ app.get('/todos', (req, res) => {
      });
 });
 
+// CREATE TO DO
 app.post('/todos', (req, res) => {
      let todo = new Todo({
           text: req.body.text
@@ -33,6 +35,7 @@ app.post('/todos', (req, res) => {
      });
 });
 
+// READ TO DO
 app.get('/todos/:id', (req, res) => {
   let id = req.params.id;
   // check ID validity
@@ -56,29 +59,7 @@ app.get('/todos/:id', (req, res) => {
   });
 });
 
-app.delete(`/todos/:id`, (req, res) => {
-     // check ID validity
-          // 404 if not
-     let id = req.params.id;
-     if (!ObjectID.isValid(id)) {
-          return res.status(404).send();
-     }
-     // find ID
-     // success
-          // if todo - send it back with 200
-          // if no todo - send back 404 with empty body
-     Todo.findByIdAndRemove(id).then((todo) => {
-          if (!todo) {
-            return res.status(404).send();
-          }
-     res.send({todo});
-     // error
-         // 400 - send empty body back
-    }).catch((e) => {
-      res.status(400).send();
-    });
-});
-
+// UPDATE TO DO
 app.patch(`/todos/:id`, (req, res) => {
      let id = req.params.id;
      // pick values user can edit
@@ -106,7 +87,31 @@ app.patch(`/todos/:id`, (req, res) => {
      });
 });
 
-// GET THIS USER
+// DELETE TO DO
+app.delete(`/todos/:id`, (req, res) => {
+     // check ID validity
+          // 404 if not
+     let id = req.params.id;
+     if (!ObjectID.isValid(id)) {
+          return res.status(404).send();
+     }
+     // find ID
+     // success
+          // if todo - send it back with 200
+          // if no todo - send back 404 with empty body
+     Todo.findByIdAndRemove(id).then((todo) => {
+          if (!todo) {
+            return res.status(404).send();
+          }
+     res.send({todo});
+     // error
+         // 400 - send empty body back
+    }).catch((e) => {
+      res.status(400).send();
+    });
+});
+
+// READ CURRENT USER
 app.get('/users/me', authenticate, (req, res) => {
      res.send(req.user);
 });
@@ -115,7 +120,6 @@ app.get('/users/me', authenticate, (req, res) => {
 app.post('/users', (req, res) => {
      let body = _.pick(req.body, [`email`, `password`]);
      let user = new User(body);
-
      //instance method on user - user.generateAuthToken
      user.save().then(() => {
           return user.generateAuthToken();
@@ -124,6 +128,18 @@ app.post('/users', (req, res) => {
           res.header(`x-auth`, token).send(user);
      }).catch((e) => {
           res.status(400).send(e);
+     });
+});
+
+// USER LOGIN
+app.post('/users/login', (req, res) => {
+     let body = _.pick(req.body, [`email`, `password`]);
+     User.findByCredentials(body.email, body.password).then((user) => {
+          return user.generateAuthToken().then((token) => {
+               res.header(`x-auth`, token).send(user);
+          });
+     }).catch((e) => {
+          res.status(400).send();
      });
 });
 
