@@ -9,8 +9,12 @@ const port = process.env.PORT || 3000;
 let app = express();
 app.use(bodyParser.json());
 
-app.get('/', (req, res) => {
-     res.send(req.body);
+app.get('/todos', (req, res) => {
+     Todo.find().then((todos) => {
+          res.status(200).send({todos});
+     }, (e) => {
+          res.status(400).send(e);
+     });
 });
 
 app.post('/todos', (req, res) => {
