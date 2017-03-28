@@ -82,7 +82,7 @@ describe(`GET /todos/:id`, () => {
                .end(done);
      });
 
-     it(`should return 404 when todo not found`, (done) => {\
+     it(`should return 404 when todo not found`, (done) => {
           //create new hex id aka string from object id
           let hexId = new ObjectID().toHexString();
           request(app)
@@ -91,11 +91,47 @@ describe(`GET /todos/:id`, () => {
                .end(done);
      });
 
-     it(`should return 404 for non-object id query`, (done) => {
+     it(`should return 404 for invalid object query`, (done) => {
           request(app)
                .get(`/todos/sillyandrewmead`)
                .expect(404)
                .end(done);
      });
-
 });
+
+     describe(`DELETE /todos/:id`, () => {
+          it(`should remove a todo`, (done) => {
+               let hexId = todos[1]._id.toHexString();
+               request(app)
+                    .delete(`/todos/${hexId}`)
+                    .expect(200)
+                    .expect((res) => {
+                         expect(res.body.todo._id).toBe(hexId);
+                    })
+                    .end((err, res) => {
+                         if (err) {
+                              return done(err);
+                         }
+                         Todo.findById(hexId).then((todo) => {
+                              expect(todo).toNotExist();
+                              done();
+                    }).catch((e) => done(e));
+               });
+          });
+
+          it(`should return 404 if todo isn't found`, (done) => {
+               //create new hex id aka string from object id
+               let hexId = new ObjectID().toHexString();
+               request(app)
+                    .delete(`/todos/${hexId}`)
+                    .expect(404)
+                    .end(done);
+          });
+
+          it(`should return 404 for invalid object query`, (done) => {
+               request(app)
+                    .delete(`/todos/sillyandrewmead`)
+                    .expect(404)
+                    .end(done);
+          });
+     });
