@@ -143,6 +143,15 @@ app.post('/users/login', (req, res) => {
      });
 });
 
+// DELETE USER TOKEN BEFORE LOGOUT
+app.delete(`/users/me/token`, authenticate, (req, res) => {
+     req.user.removeToken(req.token).then(() => {
+          res.status(200).send();
+     }, () => {
+          res.status(400).send();
+     });
+});
+
 // START SERVER
 app.listen(port, () => {
   console.log(`Application Launched on port:${port}`);
